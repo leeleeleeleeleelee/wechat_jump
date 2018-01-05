@@ -5,12 +5,12 @@ from time import sleep
 from PIL import Image
 
 def pull_pic():
-    #adb手机截图，保存在1.png
+    # adb手机截图，保存在1.png
     os.system('adb shell screencap -p /sdcard/1.png')
     os.system('adb pull /sdcard/1.png')
 
 def find_bot(im):
-    #寻找棋子的位置
+    # 寻找棋子的位置
     # 思路：
     # 棋子底座RGB大概范围为(50~60,53~63,95~110)，直接寻找这些点的x坐标再求平均
     x_sum = 0
@@ -98,7 +98,7 @@ def main():
         x_dis = abs(bot_x-target_x)
         y_dis = abs(bot_y-target_y)
         distance = (x_dis**2 + y_dis**2)**0.5
-        press = distance * 1.365
+        press = distance * 1.364
         print u'按压力度：',press
         cmd = 'adb shell input swipe 20 20 20 20 '+str(int(press))
         os.system(cmd)
