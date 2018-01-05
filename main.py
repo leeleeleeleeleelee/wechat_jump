@@ -11,6 +11,8 @@ def pull_pic():
 
 def find_bot(im):
     #寻找棋子的位置
+    # 思路：
+    # 棋子底座RGB大概范围为(50~60,53~63,95~110)，直接寻找这些点的x坐标再求平均
     x_sum = 0
     n = 0
     y_max = 0
@@ -36,8 +38,13 @@ def find_bot(im):
     # aaa.show()
 
 def find_target(im):
-    #若下一个为矩形，寻找他的中心
-    a = []
+    # 若下一个为矩形，寻找他的中心
+    # 思路：
+    # 从上往下每一行遍历
+    # 取每行最右侧的像素点为默认像素点，从左到右逐步比较，由于背景为纯色，如发现与他不同的像素点，则为下一个棋盘的顶点
+    # 计数最上面一行所有期盼像素点的X值，求平均，则为目的棋盘中心的X坐标 target_x
+    # 然后继续往下一行一行遍历，发现与目标棋盘像素点相同的，则记录其x，y
+    # 取上诉所有x中最小的（即离屏幕右侧最近的）对应的y，则为下一个棋盘中心的y坐标 target_y
     sum_x = 0
     num_x = 0
     top_y = None
@@ -62,39 +69,44 @@ def find_target(im):
 
     target_x =  sum_x/num_x
 
-    ww = []
+    coordinate_list = []
     target_pixel = pic[target_x,top_y][:3]
     for i in range(top_y,top_y+140):
         for m in range(0,w):
             if (target_pixel[0]-10 <= pic[m,i][0] <= target_pixel[0]+10) and \
                     (target_pixel[1]-10 <= pic[m,i][1] <= target_pixel[1]+10) and \
                     (target_pixel[2]-10 <= pic[m,i][2] <= target_pixel[2]+10) :
-                ww.append((m,i))
+                coordinate_list.append((m,i))
                 break
-    www = sorted(ww,key=lambda x:x[0])
-    target_y = www[0][1]+4
+    coordinate_list = sorted(coordinate_list,key=lambda x:x[0])
+    target_y = coordinate_list[0][1]+4
 
     return (target_x,target_y)
 
+def main():
+    # 主程序代码
+    num = 0
+    while True:
+        num += 1
+        print u'第%s次跳跃'%num
+        pull_pic()
+        im = Image.open('./1.png')
+        bot_x,bot_y = find_bot(im)
+        print u'棋子坐标：',(bot_x,bot_y)
+        target_x,target_y = find_target(im)
+        print u'目标方块中心坐标',(target_x,target_y)
+        x_dis = abs(bot_x-target_x)
+        y_dis = abs(bot_y-target_y)
+        distance = (x_dis**2 + y_dis**2)**0.5
+        press = distance * 1.365
+        print u'按压力度：',press
+        cmd = 'adb shell input swipe 20 20 20 20 '+str(int(press))
+        os.system(cmd)
+        print '-'*40
+        sleep(1) #苟~
 
 
-num = 0
-while True:
-    num += 1
-    print u'第%s次跳跃'%num
-    pull_pic()
-    im = Image.open('./1.png')
-    bot_x,bot_y = find_bot(im)
-    print u'棋子坐标：',(bot_x,bot_y)
-    target_x,target_y = find_target(im)
-    print u'目标方块中心坐标',(target_x,target_y)
-    x_dis = abs(bot_x-target_x)
-    y_dis = abs(bot_y-target_y)
-    distance = (x_dis**2 + y_dis**2)**0.5
-    press = distance * 1.365
-    print u'按压力度：',press
-    cmd = 'adb shell input swipe 20 20 20 20 '+str(int(press))
-    os.system(cmd)
-    print '-'*40
-    sleep(1)
+if __name__ == '__main__':
+    # 运行
+    main()
 
