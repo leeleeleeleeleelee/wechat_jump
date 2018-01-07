@@ -7,4 +7,4 @@
 4. 所以没啥卵用
 
 
-![score](/Users/mocha/Downloads/IMG_3548.PNG)
+![score](/score.PNG)
