@@ -6,3 +6,5 @@
 3. 刷分太高会被黑名单，之后不管多少分都不会上传
 4. 所以没啥卵用
 
+
+![score](/Users/mocha/Downloads/IMG_3548.PNG)
