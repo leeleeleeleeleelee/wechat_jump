@@ -54,8 +54,8 @@ def find_target(im):
         init_pixel = pic[0,y]
         for x in range(0,w):
             now_pixel = pic[x,y]
-            if (now_pixel<>init_pixel) and ((now_pixel[0] not in range(50,63)) \
-                    or (now_pixel[1] not in range(53,63)) and (now_pixel[2] not in range(95,110))):
+            if (now_pixel<>init_pixel) and (((now_pixel[0] not in range(50,63)) \
+                    or (now_pixel[1] not in range(53,63)) or (now_pixel[2] not in range(95,110)))):
 
                 if top_y == None:
                     top_y = y
@@ -98,9 +98,9 @@ def main():
         x_dis = abs(bot_x-target_x)
         y_dis = abs(bot_y-target_y)
         distance = (x_dis**2 + y_dis**2)**0.5
-        press = distance * 1.364
+        press = int(distance * 1.3645)
         print u'按压力度：',press
-        cmd = 'adb shell input swipe 20 20 20 20 '+str(int(press))
+        cmd = 'adb shell input swipe 20 20 20 20 '+str(press)
         os.system(cmd)
         print '-'*40
         sleep(1) #苟~
