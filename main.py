@@ -48,6 +48,8 @@ def find_target(im):
     sum_x = 0
     num_x = 0
     top_y = None
+    last_y = None
+
     w, h = im.size
     pic = im.load()
     for y in range(h/3,2*h/3,5):
@@ -78,8 +80,17 @@ def find_target(im):
                     (target_pixel[2]-10 <= pic[m,i][2] <= target_pixel[2]+10) :
                 coordinate_list.append((m,i))
                 break
+        # 修改Bug：如果当前方块与下一方块同色，并且当前方块水平方向上最高点覆盖了下一方块上半部分
+        if coordinate_list:
+            if last_y <> None and abs(last_y - coordinate_list[-1][1])>3:
+                print u'xxxxxxxxxxxxxxxxxx'
+                coordinate_list.pop()
+                break
+            else:
+                last_y = coordinate_list[-1][1]
+
     coordinate_list = sorted(coordinate_list,key=lambda x:x[0])
-    target_y = coordinate_list[0][1]+4
+    target_y = coordinate_list[0][1]
 
     return (target_x,target_y)
 
@@ -96,6 +107,9 @@ def main():
         target_x,target_y = find_target(im)
         print u'目标方块中心坐标',(target_x,target_y)
         x_dis = abs(bot_x-target_x)
+        if x_dis < 4:
+            x_dis = 170
+            print u'坐标纠正前：%s，纠正后：%s <================================'%(abs(bot_x-target_x),x_dis)
         y_dis = abs(bot_y-target_y)
         distance = (x_dis**2 + y_dis**2)**0.5
         press = int(distance * 1.3645)
